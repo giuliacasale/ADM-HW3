@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
 import math
+
 import nltk
 import itertools
 import os
+
 from collections import Counter
 from collections import defaultdict
 from collections import OrderedDict
@@ -11,7 +13,9 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import RegexpTokenizer
 
-import pickle
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 
 
 
@@ -27,8 +31,8 @@ def create_dataframe():
     books_to_skip = [192,2464,3011,3056,10141,11338,19728,20585,25426,25453,25902,26045,28476,29403]
     
     for i in range(1,30000):
-        if os.path.getsize(f'/Users/Giulia/Downloads/tsv 2/book_{i}.tsv') != 0 and i not in books_to_skip:
-            x = pd.read_csv(f'/Users/Giulia/Downloads/tsv 2/book_{i}.tsv',sep='\t',index_col=False)
+        if os.path.getsize(f'/Users/Giulia/Downloads/tsv/book_{i}.tsv') != 0 and i not in books_to_skip:
+            x = pd.read_csv(f'/Users/Giulia/Downloads/tsv/book_{i}.tsv',sep='\t',index_col=False)
             df = df.append(x)
    
     df.reset_index(drop=True, inplace=True)
@@ -268,5 +272,84 @@ def search_engine2(df,query,inverted_index_1,dictionary,scores):
     output = output.sort_values(by = ['Similarity'],ascending=False).head(10)
 
     return output 
+
+
+
+################################################## Q4: make nice visualization ###################################################
+
+def split_series_and_book_series(df):
+    
+    Series = []
+    bookInSeries = []
+    
+    for item in df['bookSeries']:
+        item = item.split('#')
+        Series.append(item[0])
+        if len(item)> 1:
+            bookInSeries.append(item[1])
+        else:
+            bookInSeries.append('none')
+            
+    df['Series'] = Series
+    df['bookInSeries'] = bookInSeries
+    df = df.drop('bookSeries',axis='columns')
+    df = df.reset_index()
+    
+    return df
+
+
+def series_to_analyze(df):
+    series_to_analyze = []
+
+    for i in range(len(df)):
+        if (df.iloc[i].Series not in series_to_analyze) and (df.iloc[i].bookInSeries != 'none') and (len(df.iloc[i].bookInSeries)==1):
+            if len(series_to_analyze)<=10:
+                series_to_analyze.append(df.iloc[i].Series)
+            else:
+                break
+    
+    return series_to_analyze
+
+
+
+def create_new_dataframe(df,series_to_analyze):
+
+    df1 = pd.DataFrame(columns = df.columns.tolist())
+
+    for i in range(len(df)):
+        x = df.iloc[i]
+        if x.Series in series_to_analyze and len(df.iloc[i].bookInSeries) == 1:
+            df1 = df1.append(df.loc[i],ignore_index=True)
+    
+    df1 = df1.drop({'level_0','index'},axis = 1)
+
+    return df1
+
+
+
+def plot_series(series_to_analyze, df1):
+
+    for serie in series_to_analyze:
+
+        books = df1[df1['Series']==serie].sort_values(by = ['published'])
+
+        years = books['published']
+
+        x = [years[years.index[i]].year -  years[years.index[0]].year for i in range(len(books))]
+        y = list(map(int,books['numberOfPages'].cumsum()))
+
+        ax = sns.barplot(x,y,palette='Blues')
+
+        for p in ax.patches:
+            ax.annotate(format(p.get_height()), 
+                           (p.get_x() + p.get_width() / 2, p.get_height()), 
+                           ha = 'center', va = 'center', 
+                           xytext = (0, 5), 
+                           textcoords = 'offset points')
+
+        ax.set(xlabel="years since the first book of the series", ylabel = "cumulative series page count",title=serie)
+        plt.show()
+    
+    return 
 
 
