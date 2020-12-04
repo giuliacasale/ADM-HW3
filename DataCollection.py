@@ -7,32 +7,30 @@ import re
 import os
 from langdetect import detect
 
+###### Download pages ######
 
-#open the file with urls
-file1=open("books_url.txt","r")
-c=file1.readlines()
-d=[]
-#appending to an empty list
-for string in c:
-    
-    d.append(string.rstrip("\n"))
+def download_pages(urls_file="books_url.txt", starting_index=0):
+    # open the file with urls
+    file1=open(urls_file,"r")
+    c=file1.readlines()
+    d=[]
+    # appending to an empty list
+    for string in c:
+        d.append(string.rstrip("\n"))
 
+    i=starting_index  # this value has to be initialized based on the starting point of d
+    driver = webdriver.Firefox(executable_path=GeckoDriverManager() .install())  # if you have not firefox it is not ok
 
-i=0             #this value has to be initialized based on the starting point of d
-driver = webdriver.Firefox(executable_path=GeckoDriverManager() .install())#if you have not firefox it is not ok
-
-for url in d: #d is a list with lenght equal to 30.0000 if you select d[10000:20000] you will do only that subset
-    
-    print(i)
-    #using selenium to bypass the block of the site
-    driver.get(url)
-    code=driver.page_source
-    
-    f=open("/Users/eugeniobaldo/Downloads/Hw3/book_"+str(i)+".html","w") #you have to change the path
-    f.write(code) 
-    f.close()
-    i=i+1
-    
+    for url in d:  # d is a list with lenght equal to 30.0000 if you select d[10000:20000] you will do only that subset
+        print(i)
+        # using selenium to bypass the block of the site
+        driver.get(url)
+        code=driver.page_source
+        
+        f=open("./data/page_1/book_"+str(i)+".html","w") 
+        f.write(code) 
+        f.close()
+        i=i+1
     
     
 ###### Parse downloaded pages ######
@@ -163,4 +161,5 @@ def process_pages(starting_page, ending_page, page_folder='./data/', destination
 
 
 if __name__ == '__main__':
+    download_pages()
     process_pages(1, 1, n_book_per_page=30000, starting_number=0, tsv_prefix='book', print_book=True)
