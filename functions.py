@@ -26,13 +26,13 @@ import matplotlib.pyplot as plt
 
 def create_dataframe():
     
-    df = pd.read_csv('/Users/Giulia/Downloads/tsv/book_0.tsv',sep='\t',index_col=False)
+    df = pd.read_csv('./data/tsv/book_0.tsv', sep='\t', index_col=False)
     
     books_to_skip = [192,2464,3011,3056,10141,11338,19728,20585,25426,25453,25902,26045,28476,29403]
     
     for i in range(1,30000):
-        if os.path.getsize(f'/Users/Giulia/Downloads/tsv/book_{i}.tsv') != 0 and i not in books_to_skip:
-            x = pd.read_csv(f'/Users/Giulia/Downloads/tsv/book_{i}.tsv',sep='\t',index_col=False)
+        if os.path.getsize(f'./data/tsv/book_{i}.tsv') != 0 and i not in books_to_skip:
+            x = pd.read_csv(f'./data/tsv/book_{i}.tsv', sep='\t', index_col=False)
             df = df.append(x)
    
     df.reset_index(drop=True, inplace=True)
@@ -48,7 +48,7 @@ def create_dataframe():
 def pre_processing_data(text):           
     
     stop_words = set(stopwords.words('english'))
-    text = (text.lower()).replace('\\n',' ')
+    text = (text.lower()).replace('\\n', ' ')
     punctuation = RegexpTokenizer(r'\w+')               #identifies punctuation
     tokens = punctuation.tokenize(text)               #create a list of all words
 
@@ -117,7 +117,7 @@ def frequency_of_words_per_book(df,dictionary):
 
 def inverted_index1(df,dictionary,frequency_of_words):  
     
-    inverted_index1 = dict.fromkeys(dictionary.values(),[])
+    inverted_index1 = dict.fromkeys(dictionary.values(), [])
     for key, value in dictionary.items():
         elem = []
         for i in range(len(df)):
@@ -148,7 +148,7 @@ def search_engine1(query,df,inverted_index_1,dictionary):
                 count += 1
         
         if count == len(query):
-            output = output.append(df.loc[i],ignore_index=True)
+            output = output.append(df.loc[i], ignore_index=True)
     
     return output
 
@@ -168,7 +168,7 @@ def tf(df,dictionary,frequency_of_word):
         plot_filtered = pre_processing_data(plot)
 
         #dictionary where the keys are all the words from plot_filtered
-        tf = dict.fromkeys(plot_filtered,0)
+        tf = dict.fromkeys(plot_filtered, 0)
         tot_number_of_words = len(plot_filtered)
 
         for key,item in frequency_of_word[i].items():
@@ -184,7 +184,7 @@ def tf(df,dictionary,frequency_of_word):
 - N = total number of documents in the original dataframe
 - n = total number of documents in which each token appears'''
 
-def idf(df,dictionary,frequency_of_word):    
+def idf(df, dictionary, frequency_of_word):    
     
     N = len(df)
     idf = dict.fromkeys(dictionary.keys(), 0)
@@ -204,13 +204,13 @@ def idf(df,dictionary,frequency_of_word):
 
 '''function that puts together the tf and idf score for each document and for each token. The output is a list of dictionaries where each of them refers to a specific document. The keys are given by the keys in the tf_score dictionary created above and the values are given by multiplying the two scores (tf and idf)'''
 
-def tf_idf_score(df,dictionary,tf_score,idf_score):    
+def tf_idf_score(df, dictionary, tf_score, idf_score):    
 
     tf_idf_scores = []
     for i in range(len(df)):
         tf_idf_score = {}
         for key,item in tf_score[i].items():
-            tf_idf_score[key] = round(item*idf_score[key],5) 
+            tf_idf_score[key] = round(item*idf_score[key], 5) 
         tf_idf_scores.append(tf_idf_score)
 
     return tf_idf_scores
@@ -218,7 +218,7 @@ def tf_idf_score(df,dictionary,tf_score,idf_score):
 
 '''second inverted index where, for each token, we have a list of documents where the token appeared at least once, followed by their tf-idf scores calculated above'''
 
-def inverted_index2(df,dictionary,tf_idf_scores,frequency_of_word):    
+def inverted_index2(df, dictionary, tf_idf_scores, frequency_of_word):    
     
     inverted_idx = dict.fromkeys(dictionary.values(),[])
     
@@ -234,7 +234,7 @@ def inverted_index2(df,dictionary,tf_idf_scores,frequency_of_word):
 
 '''function that calculates the cosine similairty score for each document on respect of the query given in input by the user'''
 
-def cosine_similarity(query,df,tf_idf_scores):
+def cosine_similarity(query, df, tf_idf_scores):
     
     scores = []
     for i in range(len(df)):
@@ -245,7 +245,7 @@ def cosine_similarity(query,df,tf_idf_scores):
             if token in tf_idf_scores[i]: 
                 if tf_idf_scores[i][token] > 0:
                     somma += tf_idf_scores[i][token]
-        cosine_similarity_score = round(somma/norm_d,4)
+        cosine_similarity_score = round(somma/norm_d, 4)
         scores.append(cosine_similarity_score)
         
     return scores
@@ -253,7 +253,7 @@ def cosine_similarity(query,df,tf_idf_scores):
 
 '''this function first appends a new column to the original dataframe given by the cosine similarity scores calculate before, then creates a new dataframe where the rows are given by the documents that contain in the plot ALL the words given in input by the user. The rows are also sorted by their similarity score in descending order and only the top-10 are shown'''
 
-def search_engine2(df,query,inverted_index_1,dictionary,scores):
+def search_engine2(df, query, inverted_index_1, dictionary, scores):
     
     df1 = df[['bookTitle','plot','url']]
     df1['Similarity'] = scores
@@ -267,7 +267,7 @@ def search_engine2(df,query,inverted_index_1,dictionary,scores):
                 count += 1
 
         if count == len(query):
-            output = output.append(df1.loc[i],ignore_index=True)
+            output = output.append(df1.loc[i], ignore_index=True)
     
     output = output.sort_values(by = ['Similarity'],ascending=False).head(10)
 
@@ -304,20 +304,20 @@ def rating_score(m):
 
 
     
-def lenght_score(m,input_value):
+def lenght_score(m, input_value):
     
     m["numberOfPages"]=m["numberOfPages"].fillna(100000)
     lenght_list=m["numberOfPages"].to_list()
     counter_na=lenght_list.count(100000)
     
-    title_list=list(x for x in range(0,len(lenght_list)))
+    title_list=list(x for x in range(0, len(lenght_list)))
     difference_list=[]
     for book in lenght_list:
         difference=book-input_value
         difference_list.append(abs(difference))
     d=zip(title_list,difference_list)
     d=dict(d)
-    d=sorted(d.items(),key=lambda x:x[1])
+    d=sorted(d.items(), key=lambda x:x[1])
     d=dict(d)
     coefficient=1/(len(d)-counter_na)
 
@@ -329,7 +329,7 @@ def lenght_score(m,input_value):
     new_score_list=[]
     new_score_list.append(score)
     
-    for x in range(1,len(score_list)):
+    for x in range(1, len(score_list)):
     
         if x<not_na:
             
@@ -343,9 +343,9 @@ def lenght_score(m,input_value):
             
             new_score_list.append(0)
     
-    new_d=zip(keys_list,new_score_list)
+    new_d=zip(keys_list, new_score_list)
     new_d=dict(new_d)
-    new_d=sorted(new_d.items(),key=lambda x:x[0])
+    new_d=sorted(new_d.items(), key=lambda x:x[0])
     new_d=dict(new_d)
     
     book_lenght_score=list(new_d.values())
@@ -353,7 +353,7 @@ def lenght_score(m,input_value):
 
 
 
-def publish_score(m,input_value):
+def publish_score(m, input_value):
     
     m["published"]=m["published"].fillna("0000")
     date=m["published"].to_list()
@@ -368,36 +368,30 @@ def publish_score(m,input_value):
         else:
             list_years.append(0)
 
-    title_list=list(x for x in range(0,len(list_years)))
+    title_list=list(x for x in range(0, len(list_years)))
     difference_list=[]
     for book in list_years:
         difference=book-input_value
         difference_list.append(abs(difference))
-    d=zip(title_list,difference_list)
+    d=zip(title_list, difference_list)
     d=dict(d)
-    d=sorted(d.items(),key=lambda x:x[1])
+    d=sorted(d.items(), key=lambda x:x[1])
     d=dict(d)
     coefficient=1/(len(d))
 
     score_list=list(d.values())
     keys_list=list(d.keys())
-   
 
     score=1
     new_score_list=[]
     new_score_list.append(score)
     
     for x in range(1,len(score_list)):
-    
-        
             if score_list[x]==score_list[x-1]:
                 new_score_list.append(new_score_list[x-1])
-            
             else:
                 value=round(score-(x*coefficient),3)
                 new_score_list.append(value)
-        
-        
 
     new_d=zip(keys_list,new_score_list)
     new_d=dict(new_d)
@@ -409,7 +403,6 @@ def publish_score(m,input_value):
 
 
 def input_vote():
-    
     c=False
     list_=[0,1,2,3,4,5]
     while c!=True:
@@ -450,7 +443,7 @@ def similarity_score(m,cosine_similarity_score,rate_score,lenght_score,publish_s
     matches["date_release_score"]=publish_score
     matches["user_score"]=user_score
     
-    matches=matches.sort_values(by=["user_score"],ascending=False).head(10)
+    matches=matches.sort_values(by=["user_score"], ascending=False).head(10)
     
 
     return matches
@@ -473,7 +466,7 @@ def split_series_and_book_series(df):
             
     df['Series'] = Series
     df['bookInSeries'] = bookInSeries
-    df = df.drop('bookSeries',axis='columns')
+    df = df.drop('bookSeries', axis='columns')
     df = df.reset_index()
     
     return df
@@ -493,14 +486,14 @@ def series_to_analyze(df):
 
 
 
-def create_new_dataframe(df,series_to_analyze):
+def create_new_dataframe(df, series_to_analyze):
 
     df1 = pd.DataFrame(columns = df.columns.tolist())
 
     for i in range(len(df)):
         x = df.iloc[i]
         if x.Series in series_to_analyze and len(df.iloc[i].bookInSeries) == 1:
-            df1 = df1.append(df.loc[i],ignore_index=True)
+            df1 = df1.append(df.loc[i], ignore_index=True)
     
     df1 = df1.drop({'level_0','index'},axis = 1)
 
@@ -516,10 +509,10 @@ def plot_series(series_to_analyze, df1):
 
         years = books['published']
 
-        x = [years[years.index[i]].year -  years[years.index[0]].year for i in range(len(books))]
+        x = [years[years.index[i]].year - years[years.index[0]].year for i in range(len(books))]
         y = list(map(int,books['numberOfPages'].cumsum()))
 
-        ax = sns.barplot(x,y,palette='Blues')
+        ax = sns.barplot(x, y, palette='Blues')
 
         for p in ax.patches:
             ax.annotate(format(p.get_height()), 
