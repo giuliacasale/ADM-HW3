@@ -15,7 +15,7 @@
 
 3. In the third part, it has been formulated a new score measure which takes into account some of the variables included in the dataset. This score has been called user-score and it is the result of a weighted average (with weights determined by the user) of the cosine similarity (as in part 2), the ranking score (new score measure), the lenght_score (new score measure), the published_score (new score measure). The top-k documents are sorted by the user_score. The user score and the other score measures quoted above are displayed.
 
-4. In the fourth part (bonus question) is provided visualization of some book series, with the aim to inform about writer's production during the years.
+4. In the fourth part (bonus question) is provided the visualization of the first ten book series that are encountered in the dataset. The aim is to inform about the writer's production during the years. The plots show the cumulative sum of the pages written by the author in the different books that make up the serie.
 
 5. The fifth part (theory question) is not strictly related to the task, but it consists in an algorithmic question about finding the maximum lenght of subsequence of characters that are in alphabetical order by exploiting both recursive algorithms and dynamic programming, showing the complexity differences between these two approaches. 
 
