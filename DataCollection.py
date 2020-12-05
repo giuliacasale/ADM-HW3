@@ -7,6 +7,58 @@ import re
 import os
 from langdetect import detect
 
+###### Download urls ######
+def url_request():
+    #creating the file
+    f=open("./data/books_url.txt","w") 
+    f.close()
+    # extracting the necessary urls from the html page 
+    # cycle for the first 300 pages
+    for idx in range(0,300):
+    
+        page=requests.get("https://www.goodreads.com/list/show/1.Best_Books_Ever?page="+str(idx))
+    
+        main=BeautifulSoup(page.text, features="lxml")
+
+        links = main.find_all('a') 
+        link_list=[]
+        for link in links:
+    
+            full_link = link.get("href")
+            link_list.append(full_link)
+    
+        url_list=[]    
+
+        for element in link_list[100:]:
+            element=str(element)
+            c=re.search("/book/show/",element)
+            if c is not None:
+                url_list.append(element)
+        url_list1=[] 
+
+
+        for i in range(0,len(url_list),2):
+            
+            url_list1.append(url_list[i])
+
+ 
+
+        site_url="https://www.goodreads.com"
+        books_url=[]
+        for url_book in url_list1[0:-2]:
+            book=site_url+url_book
+            book=book.strip()
+            book=book+"\n"
+            
+            books_url.append(book)
+            #append each book url to the file created before
+            f=open("./data/books_url.txt","a") 
+            f.write(book) 
+            f.close()
+    
+    return
+
+
 ###### Download pages ######
 
 def download_pages(urls_file="books_url.txt", starting_index=0):
