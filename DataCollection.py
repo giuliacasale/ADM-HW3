@@ -61,7 +61,7 @@ def url_request():
 
 ###### Download pages ######
 
-def download_pages(urls_file="books_url.txt", starting_index=0):
+def download_pages(urls_file="./data/books_url.txt", starting_index=0):
     # open the file with urls
     file1=open(urls_file,"r")
     c=file1.readlines()
@@ -213,5 +213,6 @@ def process_pages(starting_page, ending_page, page_folder='./data/', destination
 
 
 if __name__ == '__main__':
+    url_request()
     download_pages()
     process_pages(1, 1, n_book_per_page=30000, starting_number=0, tsv_prefix='book', print_book=True)
