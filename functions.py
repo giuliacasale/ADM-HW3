@@ -276,11 +276,12 @@ def search_engine2(df, query, inverted_index_1, dictionary, scores):
 
 ################################################## Q3: define a new score ########################################################
 
-
+#this function computes the rating score
 def rating_score(m):
     list_element=m["ratingCount"].to_list()
     
     rate_number=[]
+    # in this cycle is removed "," from ratingCount
     for lista in list_element:
         li=""
         for valore in str(lista):
@@ -290,9 +291,10 @@ def rating_score(m):
     
     rate_value=m["ratingValue"].to_list()
     
-    max_rate_number=max(rate_number)
-    max_rate_value=max(rate_value)
+    max_rate_number=max(rate_number) #this is the maximum rate_number (e.g. 653553)
+    max_rate_value=max(rate_value) #this is the maximum rate value (e.g. 4.7)
     rate_score=[]
+    #in this cycle is computed the rating_score for each book
     for i in range(len(m)):
         numerator=(rate_value[i])*(np.log(1+rate_number[i]))
         denominator=(max_rate_value)*(np.log(1+max_rate_number))
@@ -302,11 +304,11 @@ def rating_score(m):
     return rate_score
     
 
-
+#this function computes the lenght_score
     
 def lenght_score(m, input_value):
     
-    m["numberOfPages"]=m["numberOfPages"].fillna(100000)
+    m["numberOfPages"]=m["numberOfPages"].fillna(100000)#this value has been choosen to perform the sorting correctly followingly
     lenght_list=m["numberOfPages"].to_list()
     counter_na=lenght_list.count(100000)
     
@@ -317,7 +319,7 @@ def lenght_score(m, input_value):
         difference_list.append(abs(difference))
     d=zip(title_list,difference_list)
     d=dict(d)
-    d=sorted(d.items(), key=lambda x:x[1])
+    d=sorted(d.items(), key=lambda x:x[1])# in this sorted dictionary the na values, which have 100.000, will be put at the end of dictionary
     d=dict(d)
     coefficient=1/(len(d)-counter_na)
 
@@ -328,7 +330,7 @@ def lenght_score(m, input_value):
     score=1
     new_score_list=[]
     new_score_list.append(score)
-    
+    #in this cycle it is computed the lenght score
     for x in range(1, len(score_list)):
     
         if x<not_na:
@@ -351,7 +353,7 @@ def lenght_score(m, input_value):
     book_lenght_score=list(new_d.values())
     return book_lenght_score
 
-
+#this function computes the publish score using the same procedure of the lenght_score
 
 def publish_score(m, input_value):
     
@@ -400,7 +402,7 @@ def publish_score(m, input_value):
     book_date_score=list(new_d.values())
     return book_date_score
 
-
+#this function is used to ask the user the weight assigned to each score 
 
 def input_vote():
     c=False
@@ -420,18 +422,19 @@ def input_vote():
     
     return x
 
-
+#this function add columns corresponding to each score measure and computes the user_score
 
 def similarity_score(m,cosine_similarity_score,rate_score,lenght_score,publish_score,k_list):
     
     weights_sum=k_list[0]+k_list[1]+k_list[2]+k_list[3]
     
     user_score=[]
+    # it is computet the user_score given the difference measures and the weight assigned to each score from users
     for i in range(len(cosine_similarity_score)):
         score=(k_list[0]*cosine_similarity_score[i]+k_list[1]*rate_score[i]\
                +k_list[2]*lenght_score[i]+k_list[3]*publish_score[i])/weights_sum
         user_score.append(score)
-    
+    #it is created this new dataframe where they will be visualized the necessary information.
     matches=pd.DataFrame()
     
     matches["book_title"]=m["bookTitle"]
