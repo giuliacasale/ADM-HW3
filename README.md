@@ -19,8 +19,8 @@
 
 5. The fifth part (theory question) is not strictly related to the task, but it consists in an algorithmic question about finding the maximum lenght of subsequence of characters that are in alphabetical order by exploiting both recursive algorithms and dynamic programming, showing the complexity differences between these two approaches. 
 
-## As well as this markdown file, the content of this repository includes:
-* HM3.ipynb file, that is a jupyter notebook in which our group has answered to the assigment questions, providing both code in python and explanations regarding the accomplished operations. 
-* function.py file, where it is possible to find the single functions, separated for parts, used to perform a specific task objectives. 
-* DataCollection.py file, where there is the code used to perform the download of the html files and their parsing. 
-* finally, Homework_3_algorithm_question.ipynb provides the answer to the fifth part, there you can find the implementation of the algorithms, the demostrations of their complexity and some tests showing the differences between the two approaches. 
+## The content of this repository includes:
+- ```HM3.ipynb``` file, that is a jupyter notebook in which our group has answered to the assigment questions 2,3 and 4, providing both code in python and explanations regarding the accomplished operations. 
+- ```function.py``` file, where it is possible to find the single functions, separated for parts, used to perform a specific task objectives. 
+- ```DataCollection.py``` file, where there is the code used to perform the download of the html files and their parsing used then to create the full dataset that it was used to answer the main questions. 
+- ```Homework_3_algorithm_question.ipynb``` provides the answer to the fifth part, there you can find the implementation of the algorithms, the demostrations of their complexity and some tests showing the differences between the two approaches. 
