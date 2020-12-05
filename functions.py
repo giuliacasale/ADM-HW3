@@ -454,6 +454,9 @@ def similarity_score(m,cosine_similarity_score,rate_score,lenght_score,publish_s
 
 ################################################## Q4: make nice visualization ###################################################
 
+'''The funtion below is used to create two new columns in the dataset starting from the columns bookSeries. It will separate the name of the series
+from the number of the book in that particular serie'''
+
 def split_series_and_book_series(df):
     
     Series = []
@@ -469,15 +472,17 @@ def split_series_and_book_series(df):
             
     df['Series'] = Series
     df['bookInSeries'] = bookInSeries
-    df = df.drop('bookSeries', axis='columns')
+    df = df.drop('bookSeries', axis='columns')  #remove the orginal column that is now splitted into two new columns 
     df = df.reset_index()
     
     return df
 
 
+'''function used to detect the first ten series, in order of appearence, that we will need to analyze'''
+
 def series_to_analyze(df):
     series_to_analyze = []
-
+    
     for i in range(len(df)):
         if (df.iloc[i].Series not in series_to_analyze) and (df.iloc[i].bookInSeries != 'none') and (len(df.iloc[i].bookInSeries)==1):
             if len(series_to_analyze)<=10:
@@ -488,9 +493,11 @@ def series_to_analyze(df):
     return series_to_analyze
 
 
+'''function used to create a new dataset that contains only the books that are part of the ten book series that we want to analyze'''
 
 def create_new_dataframe(df, series_to_analyze):
-
+    
+    #the new dataframe has the same columns of the original one
     df1 = pd.DataFrame(columns = df.columns.tolist())
 
     for i in range(len(df)):
@@ -502,7 +509,7 @@ def create_new_dataframe(df, series_to_analyze):
 
     return df1
 
-
+'''function used to plot the cumulative series page count per series'''
 
 def plot_series(series_to_analyze, df1):
 
